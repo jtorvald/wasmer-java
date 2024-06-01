@@ -5,14 +5,13 @@
 
 package org.wasmer;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 public class Native {
     public static final boolean LOADED_EMBEDDED_LIBRARY;
@@ -25,6 +24,7 @@ public class Native {
 
     public static String getCurrentPlatformIdentifier() {
         String osName = System.getProperty("os.name").toLowerCase();
+        String osArch = System.getProperty("os.arch").toLowerCase();
 
         if (osName.contains("windows")) {
             osName = "windows";
@@ -34,7 +34,13 @@ public class Native {
             osName = osName.replaceAll("\\s+", "_");
         }
 
-        return osName + "-" + System.getProperty("os.arch");
+        osArch = switch(osArch) {
+            case "x86_64", "x64", "x86-64" -> "amd64";
+            case "aarch64", "arm-v8" -> "arm64";
+            default -> osArch;
+        };
+
+        return osName + "-" + osArch;
     }
 
     private static boolean loadEmbeddedLibrary() {
