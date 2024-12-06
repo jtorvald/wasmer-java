@@ -18,6 +18,8 @@ else
         build_arch = amd64
     else ifeq ($(ARCH),arm64)
         build_arch = arm64
+    else ifeq ($(ARCH),aarch64)
+        build_arch = aarch64
     else
         $(error Architecture not supported yet)
     endif
@@ -64,6 +66,13 @@ build-rust-amd64-windows:
 	cp target/x86_64-pc-windows-msvc/release/wasmer_jni.dll artifacts/windows-amd64/
 	mkdir -p target/current
 	cp target/x86_64-pc-windows-msvc/release/wasmer_jni.dll target/current/
+
+build-rust-aarch64-linux:
+	rustup target add aarch64-unknown-linux-gnu
+	cargo build --release --target=aarch64-unknown-linux-gnu
+	mkdir -p artifacts/linux-aarch64
+	cp target/aarch64-unknown-linux-gnu/release/libwasmer_jni.so artifacts/linux-amd64/
+	test -h target/current || ln -s aarch64-unknown-linux-gnu/release target/current
 
 # Compile the Java part (incl. `build-test`, see `gradlew`).
 build-java:
