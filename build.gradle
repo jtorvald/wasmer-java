@@ -1,3 +1,9 @@
+buildscript {
+    repositories {
+        maven { url "https://repo.grails.org/grails/core/" }
+    }
+}
+
 plugins {
     id "java"
     // As Wasmer is a package, we need tools to build the JARs and so
